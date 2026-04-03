@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cuenta Regresiva</title>
+
+  <!-- Configuración móvil -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f2027">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    .number {
+      font-size: 2em;
+      font-weight: bold;
+    }
+
+    .progress {
+      margin-top: 20px;
+      height: 8px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: lime;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+  <h1>⏳ Cuenta regresiva para ver a mi nena</h1>
+
+  <div class="countdown">
+    <div class="card"><div id="d" class="number">0</div>Días</div>
+    <div class="card"><div id="h" class="number">0</div>Horas</div>
+    <div class="card"><div id="m" class="number">0</div>Min</div>
+    <div class="card"><div id="s" class="number">0</div>Seg</div>
+  </div>
+
+  <div class="progress">
+    <div id="bar" class="bar"></div>
+  </div>
+</div>
+
+<script>
+  const start = new Date();
+  const target = new Date("2026-05-19T20:00:00-04:00");
+
+  function update() {
+    const now = new Date();
+    const diff = target - now;
+
+    if (diff <= 0) {
+      document.body.innerHTML = "<h1>🎉 ¡Llegó el momento!</h1>";
+      return;
+    }
+
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff / (1000*60*60)) % 24);
+    const m = Math.floor((diff / (1000*60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("d").textContent = d;
+    document.getElementById("h").textContent = h;
+    document.getElementById("m").textContent = m;
+    document.getElementById("s").textContent = s;
+
+    const progress = ((now - start) / (target - start)) * 100;
+    document.getElementById("bar").style.width = progress + "%";
+  }
+
+  setInterval(update, 1000);
+  update();
+
+  // Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+</script>
+
+</body>
+</html>
